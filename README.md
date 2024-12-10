@@ -38,7 +38,7 @@ source/ ├── User/ │ ├── User.java │ ├── AbsOrganizer.java 
 
 1. Clone this repository:
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/ridika-2004/HealthEd.git
 
 2. Navigate to the project folder:
    ```bash
