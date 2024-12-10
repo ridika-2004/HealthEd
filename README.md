@@ -34,8 +34,6 @@ source/ ├── User/ │ ├── User.java │ ├── AbsOrganizer.java 
 ## How to Use
 
 
-## How to Use
-
 1. Clone this repository:
    ```bash
    git clone https://github.com/ridika-2004/HealthEd.git
