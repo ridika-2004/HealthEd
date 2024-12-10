@@ -1,40 +1,29 @@
 package source.Feedback;
-
+import source.Utility.*;
+import java.util.Scanner;
 
 public class Feedback {
 
-    private static final String FILE_NAME = "feedback.txt";
-    private IFileManager fileManager;
-
-    // Constructor: Depend on IFileManager abstraction
-    public Feedback(IFileManager fileManager) {
-        this.fileManager = fileManager;  // Inject dependency through constructor
+    public void addFeedback(String filepath, IFileWriteUtility fileWriteUtility) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter your name: ");
+        String name = scanner.nextLine().trim();
+        System.out.print("Enter your feedback: ");
+        String feedback = scanner.nextLine().trim();
+        String feedbackData = name + ": " + feedback;
+        fileWriteUtility.appendToFile(filepath, feedbackData);
+        System.out.println("Thank you for your feedback!");
     }
 
-    // Method to add feedback to the file
-    public void addFeedback(String participantName, String feedback) {
-        String data = participantName + ": " + feedback;
-        fileManager.write(FILE_NAME, data);  // Delegate to IFileManager's write method
-    }
-
-    // Method to display feedback by reading from the file
-    public void displayFeedback() {
-        // Read all the content from the file
-        String fileContent = fileManager.read(FILE_NAME);
-
-        // If the file is empty, print a message and return
-        if (fileContent == null || fileContent.isEmpty()) {
-            System.out.println("No feedback available.");
+    public void displayFeedback(String filepath, IFileReaderUtility fileReaderUtility) {
+        String feedbackData = fileReaderUtility.readFile(filepath);
+        if (feedbackData.isEmpty()) {
+            System.out.println("No feedbacks available.");
             return;
         }
-
-        // Split the content into lines
-        String[] feedbackArray = fileContent.split("\n");
-
-        // Loop through each feedback and print it
-        System.out.println("Feedbacks:");
-        for (String feedback : feedbackArray) {
-            System.out.println(feedback.trim());  // Print each feedback line
+        String[] feedbacks = feedbackData.split("\n");
+        for (int i = 0; i < feedbacks.length; i++) {
+            System.out.println((i + 1) + ". " + feedbacks[i]);
         }
     }
 }
