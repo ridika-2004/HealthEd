@@ -1,5 +1,10 @@
 # HealthEd
 
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/0b1cd1fd-490c-4f85-b427-0fede6aaa4b1" alt="HealthEd" width="250">
+</p>
+
 HealthEd is a comprehensive health workshop management system designed to simplify the organization and participation in educational workshops. It provides features for creating, editing, and managing workshops, along with the ability to add educational resources.
 
 ## Features
