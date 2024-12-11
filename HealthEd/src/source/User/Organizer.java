@@ -13,57 +13,79 @@ public class Organizer extends AbsOrganizer {
         Scanner scanner = new Scanner(System.in);
         String authorName = getInput("Enter Author Name: ", scanner);
         String topic = getInput("Enter Topic: ", scanner);
-        String educationalResources = ResourceCollector.collectResources(new Scanner(System.in));
+        String educationalResources = ResourceCollector.collectResources(scanner);
+
         String workshopDetails = authorName + "," + topic + "," + educationalResources;
         fileWriteUtility.appendToFile(filePath, workshopDetails);
-        System.out.println("Educational resources added successfully!");
+        System.out.println("Resources added successfully!");
     }
+
 
     @Override
     public void approveAttendees(String filePath, IFileReaderUtility fileReaderUtility, String writeFile, IFileWriteUtility fileWriteUtility) {
         String[] attendees = readFileAndSplit(filePath, fileReaderUtility);
-        if (attendees.length == 0) {
-            System.out.println("No attendees to approve.");
-            return;
-        }
-        System.out.println("List of Attendees:");
-        for (int i = 0; i < attendees.length; i++) {
-            System.out.println((i + 1) + ". " + attendees[i].split(",")[0]);
-        }
-        System.out.print("Approve them? :");
-        Scanner scanner = new Scanner(System.in);
-        if ("yes".equals(scanner.nextLine().trim().toLowerCase())) {
-            fileWriteUtility.appendToFile(writeFile, String.join(",", attendees));
-            System.out.println("All attendees approved and written to file.");
-        } else {
-            System.out.println("No attendees approved.");
+        if (validateAndDisplayList("attendees", attendees)) {
+            if (getConfirmation("Approve them?")) {
+                fileWriteUtility.appendToFile(writeFile, String.join(",", attendees));
+                System.out.println("All attendees approved and written to file.");
+            } else {
+                System.out.println("No attendees approved.");
+            }
         }
     }
 
-    public void deleteFirstAttendeeIfWorkshopPassed(String workshopFilePath, String attendeesFilePath, IFileReaderUtility fileReaderUtility, IFileManipulator fileManipulator) {
-        String[] workshopDetails = readFileAndSplit(workshopFilePath, fileReaderUtility);
-        if (workshopDetails.length == 0) return;
+    @Override
+    public void displayAttendees(String filePath, IFileReaderUtility fileReaderUtility) {
+        String[] attendees = readFileAndSplit(filePath, fileReaderUtility);
+        validateAndDisplayList("attendees", attendees);
+    }
 
-        String[] firstWorkshopDetails = workshopDetails[0].split(",");
-        String workshopDate = firstWorkshopDetails[1];
-        String workshopTime = firstWorkshopDetails[2];
-        String workshopDateTime = workshopDate + " " + workshopTime;
+    public void deleteAttendeesIfWorkshopPassed(String workshopFilePath, String attendeesFilePath, IFileReaderUtility fileReaderUtility, IFileManipulator fileManipulator) {
+        String workshopDateTime = getFirstWorkshopDateTime(workshopFilePath, fileReaderUtility);
+        if (workshopDateTime != null && hasDateTimePassed(workshopDateTime)) {
+            String[] attendees = readFileAndSplit(attendeesFilePath, fileReaderUtility);
+            if (attendees.length > 0) {
+                fileManipulator.deleteFromFile(attendeesFilePath, attendees[0]);
+            }
+        }
+    }
 
+    private String getFirstWorkshopDateTime(String filePath, IFileReaderUtility fileReaderUtility) {
+        String[] workshopDetails = readFileAndSplit(filePath, fileReaderUtility);
+        if (workshopDetails.length > 0) {
+            String[] firstWorkshopDetails = workshopDetails[0].split(",");
+            return firstWorkshopDetails[1] + " " + firstWorkshopDetails[2];
+        }
+        return null;
+    }
+
+    private boolean hasDateTimePassed(String dateTime) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         try {
-            Date workshopDateTimeParsed = dateFormat.parse(workshopDateTime);
-            Date currentDateTime = new Date();
-
-            if (workshopDateTimeParsed.before(currentDateTime)) {
-                String[] attendees = readFileAndSplit(attendeesFilePath, fileReaderUtility);
-                if (attendees.length > 0) {
-                    String firstAttendee = attendees[0];
-                    fileManipulator.deleteFromFile(attendeesFilePath, firstAttendee);
-                }
-            }
+            Date parsedDateTime = dateFormat.parse(dateTime);
+            return parsedDateTime.before(new Date());
         } catch (ParseException e) {
             System.out.println("Error parsing date/time.");
+            return false;
         }
+    }
+
+    private boolean validateAndDisplayList(String itemType, String[] items) {
+        if (items.length == 0) {
+            System.out.println("No " + itemType + " found.");
+            return false;
+        }
+        System.out.println("List of " + itemType + ":");
+        for (int i = 0; i < items.length; i++) {
+            System.out.println((i + 1) + ". " + items[i].split(",")[0]);
+        }
+        return true;
+    }
+
+    private boolean getConfirmation(String prompt) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print(prompt + " (yes/no): ");
+        return "yes".equalsIgnoreCase(scanner.nextLine().trim());
     }
 
     private String getInput(String prompt, Scanner scanner) {
