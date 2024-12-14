@@ -26,6 +26,10 @@ HealthEd is a comprehensive health workshop management system designed to simpli
   - Save and retrieve workshop details from files.
   - Append, edit, and delete records efficiently.
 
+- **Feedback:**
+  - Allows users to provide feedback for the workshops
+  - View feedback provided by others. 
+
 ## Technology Stack
 
 - **Programming Language:** Java
