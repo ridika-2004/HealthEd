@@ -61,5 +61,5 @@ source/ ├── User/ │ ├── User.java │ ├── AbsOrganizer.java 
 Contributions are welcome! Please fork the repository and submit a pull request for any improvements or features you'd like to add.
 
 ## License
+This project is free to use, modify, and share for personal or educational purposes. No attribution is required, but it’s appreciated. Commercial use is not allowed, please respect the original work.
 
-This project is licensed under the MIT License. See the `LICENSE` file for details.
