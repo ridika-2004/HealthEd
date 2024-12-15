@@ -18,13 +18,15 @@ public class FileReadWrite implements IFileReadWrite{
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                if (line.contains(searchTerm)) {
-                    return true;
+                String[] parts = line.split(",");
+                for (String part : parts) {
+                    if (part.trim().equalsIgnoreCase(searchTerm.trim())) {
+                        return true;
+                    }
                 }
             }
-        } catch (IOException e) {
-            throw new RuntimeException("Error searching in file: " + e.getMessage(), e);
-        }
+        } catch (IOException e) { System.out.println("File is empty"); }
+        
         return false;
     }
 
@@ -38,7 +40,7 @@ public class FileReadWrite implements IFileReadWrite{
     }
     @Override
     public void appendToFile(String filePath, String data) {
-        try (FileWriter writer = new FileWriter(filePath, true)) { // append mode
+        try (FileWriter writer = new FileWriter(filePath, true)) {
             writer.write(data + "\n");
         } catch (IOException e) {
             throw new RuntimeException("Error appending to file: " + e.getMessage(), e);

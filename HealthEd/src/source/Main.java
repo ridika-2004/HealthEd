@@ -3,6 +3,7 @@ package source;
 import source.workshop.Workshop;
 import source.Feedback.Feedback;
 import source.Utility.*;
+import source.User.*;
 
 import java.util.Scanner;
 
@@ -12,6 +13,7 @@ public class Main {
         IFileManipulator fileManipulator = new FileManipulator(); // Assuming you have implemented this as well
         Workshop workshop = new Workshop();
         Feedback feedback = new Feedback();
+        User user = new User();
 
         Scanner scanner = new Scanner(System.in);
         String filePath = "src\\source\\files\\workshop.txt"; // Replace with an actual file path in your system
@@ -23,7 +25,8 @@ public class Main {
             System.out.println("3. Delete Workshop");
             System.out.println("4. Give Feedback");
             System.out.println("5. Display Feedback");
-            System.out.println("6. Exit");
+            System.out.println("6. Register for workshop");
+            System.out.println("7. Exit");
             System.out.print("Choose an option: ");
 
             int choice = scanner.nextInt();
@@ -50,6 +53,10 @@ public class Main {
                     feedback.displayFeedback("src\\source\\files\\feedback.txt", fileReadWrite);
                 }
                 case 6 -> {
+                    //user.displayProfile();
+                    user.login();
+                }
+                case 7 -> {
                     System.out.println("Exiting Workshop Management System. Goodbye!");
                     return;
                 }

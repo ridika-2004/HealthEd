@@ -1,4 +1,5 @@
 package source.User;
+
 import java.time.LocalDate;
 import java.util.*;
 import source.Utility.*;
@@ -14,52 +15,23 @@ public class User {
         email = scanner.nextLine().trim();
     }
 
-    public String getName() {return name;}
-    public String getEmail() {return email;}
+    public String getName() {   return name;    }
+
+    public String getEmail() {  return email;   }
 
     public void registerForWorkshop(IFileReadWrite fileWrite, String filepath, String workshopName) {
-        fileWrite.appendToFile(filepath, workshopName + name);
-    }
-
-    public void viewWorkshops(IFileReadWrite fileRead, String filepath, boolean upcoming) {
-        String[] workshops = readFileAndSplit(fileRead, filepath);
-        String workshopType = upcoming ? "Upcoming Workshops:" : "Past Workshops:";
-        System.out.println(workshopType);
-
-        LocalDate currentDate = LocalDate.now();
-        for (String workshop : workshops) {
-            if (isWorkshopOfType(workshop, currentDate, upcoming)) {
-                displayWorkshop(workshop);
-            }
-        }
-    }
-
-    private boolean isWorkshopOfType(String workshop, LocalDate currentDate, boolean upcoming) {
-        String[] parts = workshop.split(" ");
-        LocalDate workshopDate = LocalDate.parse(parts[1]);
-        return (upcoming && workshopDate.isAfter(currentDate)) || (!upcoming && workshopDate.isBefore(currentDate));
-    }
-
-    private void displayWorkshop(String workshop) {
-        String[] parts = workshop.split(",");
-        String workshopName = parts[0];
-        LocalDate workshopDate = LocalDate.parse(parts[1]);
-        System.out.println(workshopName + " on " + workshopDate);
+        fileWrite.appendToFile(filepath, workshopName +","+ name);
+        System.out.println("Waiting for approval........");
     }
 
     public void viewResources(IFileReadWrite fileRead, String filepath) {
-        String[] lines = readFileAndSplit(fileRead, filepath);
+        String[] lines = (String[]) fileRead.readFile(filepath, true); // Read and split into lines
         int selectedIndex = displayHeadlines(lines);
         if (selectedIndex != -1) {
             parseAndDisplayResource(lines, selectedIndex);
         } else {
             System.out.println("Invalid index entered. Try again.");
         }
-    }
-
-    private String[] readFileAndSplit(IFileReadWrite fileRead, String filepath) {
-        String fileContent = fileRead.readFile(filepath);
-        return fileContent.split("\n");
     }
 
     private int displayHeadlines(String[] lines) {
@@ -79,7 +51,7 @@ public class User {
 
     private void parseAndDisplayResource(String[] lines, int index) {
         String selectedLine = lines[index];
-        System.out.println("Selected Headline: " + selectedLine.split(",")[0]);
+        System.out.println("Title: " + selectedLine.split(",")[0]);
         String[] parts = selectedLine.split(",");
         System.out.println("Details:");
         for (int i = 1; i < parts.length; i++) {
@@ -90,5 +62,6 @@ public class User {
     public void displayProfile() {
         System.out.println("Name: " + this.name);
         System.out.println("Email: " + this.email);
+        System.out.println("Approval for next workshop: "+ "approved");
     }
 }

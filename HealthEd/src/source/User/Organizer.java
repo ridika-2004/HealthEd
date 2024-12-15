@@ -1,6 +1,6 @@
 package source.User;
-import source.Utility.*;
 
+import source.Utility.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -20,10 +20,9 @@ public class Organizer extends AbsOrganizer {
         System.out.println("Resources added successfully!");
     }
 
-
     @Override
     public void approveAttendees(String filePath, IFileReadWrite fileReader, String writeFile, IFileReadWrite fileWriter) {
-        String[] attendees = readFileAndSplit(filePath, fileReader);
+        String[] attendees = (String[]) fileReader.readFile(filePath, true); // Read and split into lines
         if (validateAndDisplayList("attendees", attendees)) {
             if (getConfirmation("Approve them?")) {
                 fileWriter.appendToFile(writeFile, String.join(",", attendees));
@@ -36,14 +35,14 @@ public class Organizer extends AbsOrganizer {
 
     @Override
     public void displayAttendees(String filePath, IFileReadWrite fileReader) {
-        String[] attendees = readFileAndSplit(filePath, fileReader);
+        String[] attendees = (String[]) fileReader.readFile(filePath, true); // Read and split into lines
         validateAndDisplayList("attendees", attendees);
     }
 
     public void deleteAttendeesIfWorkshopPassed(String workshopFilePath, String attendeesFilePath, IFileReadWrite fileReader, IFileManipulator fileManipulator) {
         String workshopDateTime = getFirstWorkshopDateTime(workshopFilePath, fileReader);
         if (workshopDateTime != null && hasDateTimePassed(workshopDateTime)) {
-            String[] attendees = readFileAndSplit(attendeesFilePath, fileReader);
+            String[] attendees = (String[]) fileReader.readFile(attendeesFilePath, true); // Read and split into lines
             if (attendees.length > 0) {
                 fileManipulator.deleteFromFile(attendeesFilePath, attendees[0]);
             }
@@ -51,7 +50,7 @@ public class Organizer extends AbsOrganizer {
     }
 
     private String getFirstWorkshopDateTime(String filePath, IFileReadWrite fileReader) {
-        String[] workshopDetails = readFileAndSplit(filePath, fileReader);
+        String[] workshopDetails = (String[]) fileReader.readFile(filePath, true); // Read and split into lines
         if (workshopDetails.length > 0) {
             String[] firstWorkshopDetails = workshopDetails[0].split(",");
             return firstWorkshopDetails[1] + " " + firstWorkshopDetails[2];
@@ -91,10 +90,5 @@ public class Organizer extends AbsOrganizer {
     private String getInput(String prompt, Scanner scanner) {
         System.out.print(prompt);
         return scanner.nextLine().trim();
-    }
-
-    private String[] readFileAndSplit(String filePath, IFileReadWrite fileReader) {
-        String fileContent = fileReader.readFile(filePath);
-        return fileContent.split("\n");
     }
 }
